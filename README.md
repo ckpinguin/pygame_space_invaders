@@ -1,0 +1,1 @@
+Yet another space invaders clone for the 100 Days of Python day 95 assignment. I more or less took it from https://thepythoncode.com/article/make-a-space-invader-game-in-python, but I wanted it to become my own and try to develop it a bit further for fun.
