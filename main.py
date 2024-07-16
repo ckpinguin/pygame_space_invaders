@@ -13,15 +13,10 @@ class Main:
     def __init__(self, screen: pygame.Surface):
         self.screen = screen
         self.FPS = pygame.time.Clock()
-        self.background_image = pygame.image.load(
-            'assets/background/background.png')
-        self.background_image = pygame.transform.scale(
-            self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
     def main(self):
         world = World(self.screen)
         while True:
-            self.screen.blit(self.background_image, (0, 0))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()

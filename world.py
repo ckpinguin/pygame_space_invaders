@@ -1,3 +1,4 @@
+from time import sleep
 from display import Display
 import pygame
 from ship import Ship
@@ -10,6 +11,8 @@ from settings import (
     NAV_THICKNESS
 )
 
+pygame.mixer.init()
+
 
 class World:
     def __init__(self, screen: pygame.Surface):
@@ -19,11 +22,26 @@ class World:
         self.aliens: pygame.sprite.Group[Alien] = pygame.sprite.Group()
         self.display = Display(self.screen)
 
+        self.background_image = pygame.image.load(
+            'assets/background/background.png')
+        self.background_image = pygame.transform.scale(
+            self.background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
         self.game_over = False
         self.player_score = 0
         self.game_level = 1
 
+        self._prepare_sounds()
         self._generate_world()
+
+    def _prepare_sounds(self):
+        self.shoot_sound = pygame.mixer.Sound('assets/sounds/laser.mp3')
+        self.alien_hit_sound = pygame.mixer.Sound(
+            'assets/sounds/explosion.mp3')
+        self.victory_sound = pygame.mixer.Sound('assets/sounds/victory.mp3')
+        self.game_over_sound = pygame.mixer.Sound(
+            'assets/sounds/game_over.mp3')
+        self.lose_life_sound = pygame.mixer.Sound('assets/sound/buzzer.mp3')
 
     def _generate_aliens(self):
         alien_cols = (SCREEN_WIDTH // CHARACTER_SIZE) // 2
@@ -81,6 +99,7 @@ class World:
 
     def player_shoot(self):
         self.player.sprite._shoot()
+        self.shoot_sound.play()
 
     def _detect_collisions(self):
         player_attack_collision = pygame.sprite.groupcollide(
@@ -88,13 +107,14 @@ class World:
         )
         if player_attack_collision:
             self.player_score += 10
-
+            self.alien_hit_sound.play()
         for alien in self.aliens.sprites():
             alien_attack_collision = pygame.sprite.groupcollide(
                 alien.bullets, self.player, True, False
             )
             if alien_attack_collision:
                 self.player.sprite.life -= 1
+                self.lose_life_sound.play()
                 break
 
         alien_to_player_collision = pygame.sprite.groupcollide(
@@ -102,6 +122,10 @@ class World:
         )
         if alien_to_player_collision:
             self.player.sprite.life -= 1
+            self.lose_life_sound.play()
+
+        if self.player.sprite.life <= 0:
+            self.game_over_sound.play()
 
     def _alien_movement(self):
         move_sideward = False
@@ -149,12 +173,15 @@ class World:
 
         if len(self.aliens) == 0 and self.player.sprite.life > 0:
             self.game_level += 1
+            self.victory_sound.play()
+            sleep(1)
             self._generate_aliens()
             for alien in self.aliens.sprites():
                 # Raise speed according to current level
                 alien.move_speed += self.game_level - 1
 
     def update(self):
+        self.screen.blit(self.background_image, (0, 0))
         if not self.game_over:
             self._detect_collisions()
             self._alien_movement()
