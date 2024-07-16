@@ -41,7 +41,7 @@ class World:
         self.victory_sound = pygame.mixer.Sound('assets/sounds/victory.mp3')
         self.game_over_sound = pygame.mixer.Sound(
             'assets/sounds/game_over.mp3')
-        self.lose_life_sound = pygame.mixer.Sound('assets/sound/buzzer.mp3')
+        self.lose_life_sound = pygame.mixer.Sound('assets/sounds/buzzer.mp3')
 
     def _generate_aliens(self):
         alien_cols = (SCREEN_WIDTH // CHARACTER_SIZE) // 2
