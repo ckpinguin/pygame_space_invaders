@@ -7,6 +7,7 @@ pygame.font.init()
 class Display:
     def __init__(self, screen: pygame.Surface):
         self.screen = screen
+
         self.score_font = pygame.font.SysFont("monospace", FONT_SIZE)
         self.level_font = pygame.font.SysFont("impact", FONT_SIZE)
         self.event_font = pygame.font.SysFont("impact", EVENT_FONT_SIZE)
